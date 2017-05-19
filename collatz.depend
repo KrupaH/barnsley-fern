@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1495090642 source:/Users/krupahebbar/Documents/Programs/collatz/main.cpp
+	<iostream>
+	<stdlib.h>
+	<GLUT/glut.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<iostream>
+	<stdlib.h>
+	<GL/glut.h>
+
