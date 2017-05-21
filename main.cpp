@@ -63,7 +63,7 @@ void display( void )
 
     float x = 0, y = 0;
 
-    for(k=0; k<15000; k++)
+    for(k=0; k<10000; k++)
     {
         //cout<<'('<<x<<','<<y<<')'<<endl;
         float num = rand()%100/100;
