@@ -14,6 +14,7 @@ using namespace std;
 
 const float abcd[4][2][2] = {{{0,0},{0,0.16}},{{0.85,0.04},{-0.04,0.85}},{{0.2,-0.26},{0.23,0.22}},{{-0.15,0.28},{0.26,0.24}}};
 const float ef[4][2][1] = {{{0},{0}},{{0},{1.6}},{{0},{1.6}},{{0},{0.44}}};
+const float p[4] = {1,85,7,7};
 
 /* Helper method to perform matrix multiplication and addition
  * abcd[i]*{x,y}+ef[i]
@@ -26,9 +27,9 @@ void generateFern(float &x, float &y){
     int pIndex;
     static int countPoints = 0;
 
-    if (probability < 85) pIndex = 0;
-    else if (probability == 85) pIndex = 1;
-    else if (probability > 85 && probability < 93) pIndex = 2;
+    if (probability < p[0]) pIndex = 0;
+    else if (probability >= p[0] && probability < (p[0]+p[1])) pIndex = 1;
+    else if (probability >= (p[0]+p[1]) && probability < (p[0]+p[1]+p[2])) pIndex = 2;
     else pIndex = 3;
 
     //Perform abcd[pIndex]*{x,y} + ef[pIndex]
@@ -37,14 +38,6 @@ void generateFern(float &x, float &y){
     tempY = abcd[pIndex][1][0]*x + abcd[pIndex][1][1]*y + ef[pIndex][1][0];
     x = tempX;
     y = tempY;
-
-    glPointSize(2);
-    glColor3f(0,1,0);
-    glBegin(GL_POINTS);
-    glVertex2f(x,y);
-    glEnd();
-    glFlush();
-    cout<<countPoints++<<endl;
 }
 
 
@@ -70,7 +63,7 @@ void display( void )
 
     float x = 0, y = 0;
 
-    for(k=0; k<5000; k++)
+    for(k=0; k<15000; k++)
     {
         //cout<<'('<<x<<','<<y<<')'<<endl;
         float num = rand()%100/100;
@@ -79,6 +72,11 @@ void display( void )
         else if(num2==1) glColor3f(0,num,0);
         else glColor3f(0,0,num);
         generateFern(x,y);
+        glColor3f(0,1,0.3);
+        glBegin(GL_POINTS);
+        glVertex2f(x,y);
+        glEnd();
+        glFlush();
      }
  }
 
