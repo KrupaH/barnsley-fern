@@ -36,6 +36,8 @@ float abcd[4][2][2];
 float ef[4][2][1];
 float p[4];
 
+char name_var[25]={"Barnsley Fern"};
+
 bool isFirstDisplay = true;
 
 void assignFern(float abcd[4][2][2], float ef[4][2][1], float p[4]){
@@ -53,15 +55,19 @@ void assignFern(float abcd[4][2][2], float ef[4][2][1], float p[4]){
 void changeFern(const int changeLeaf){
     switch(changeLeaf){
         case 1: assignFern(barnsley_abcd, barnsley_ef, barnsley_p);
+                strcpy(name_var,"Barnsley Fern");
                 glutPostRedisplay();
                 break;
         case 2: assignFern(barnsley_mod_abcd, barnsley_mod_ef, barnsley_mod_p);
+                strcpy(name_var,"Modified Barnsley Fern");
                 glutPostRedisplay();
                 break;
         case 3: assignFern(cyclo_abcd, cyclo_ef, cyclo_p);
+                strcpy(name_var,"Cyclosorus Fern");
                 glutPostRedisplay();
                 break;
         case 4: assignFern(culcita_abcd, culcita_ef, culcita_p);
+                strcpy(name_var,"Culcita Fern");
                 glutPostRedisplay();
                 break;
     }
@@ -103,16 +109,39 @@ void myinit()
       glMatrixMode(GL_MODELVIEW);
 }
 
+void display_name()
+{
+  glRasterPos2f(10,10);
+
+  for(int i=0; name_var[i]!='\0';i++)
+  {
+  glutBitmapCharacter(GLUT_BITMAP_9_BY_15, name_var[i]);
+  }
+
+}
+
+static void resize(int width, int height)
+{
+    const float ar = (float) width / (float) height;
+    float w = width;
+    float h = height;
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity() ;
+}
 
 void display( void )
 {
     int j, k;
     glClearColor(1.0, 1.0, 1.0, 1.0); /* white background */
     glClear(GL_COLOR_BUFFER_BIT);  /*clear the window */
-
+    display_name();
     //initialization of abcd, ef, and p if first display
     if(isFirstDisplay){
-
+        changeFern(1);
         isFirstDisplay = false;
     }
 
@@ -121,7 +150,7 @@ void display( void )
 
     float x = 0, y = 0;
 
-    for(k=0; k<10000; k++)
+    for(k=0; k<5000; k++)
     {
         //cout<<'('<<x<<','<<y<<')'<<endl;
         float num = rand()%100/100;
