@@ -105,13 +105,13 @@ void myinit()
 
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
-      gluOrtho2D(-10, 10, 0, 20);
+      gluOrtho2D(-10, 10, 0, 10);
       glMatrixMode(GL_MODELVIEW);
 }
 
 void display_name()
 {
-  glRasterPos2f(10,10);
+  glRasterPos2f(-9,9);
 
   for(int i=0; name_var[i]!='\0';i++)
   {
@@ -122,13 +122,18 @@ void display_name()
 
 static void resize(int width, int height)
 {
-    const float ar = (float) width / (float) height;
-    float w = width;
-    float h = height;
-    glViewport(0, 0, width, height);
+	float xmin=-10, ymin=0, xmax=10, ymax=10;
+	if(width>height){
+		xmin*=(width/height);
+		xmax*=(width/height);
+	}
+	else{
+		ymin*=(height/width);
+		ymax*=(height/width);
+	}
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
+    gluOrtho2D(xmin,xmax,ymin,ymax);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity() ;
 }
@@ -150,7 +155,7 @@ void display( void )
 
     float x = 0, y = 0;
 
-    for(k=0; k<5000; k++)
+    for(k=0; k<15000; k++)
     {
         //cout<<'('<<x<<','<<y<<')'<<endl;
         float num = rand()%100/100;
