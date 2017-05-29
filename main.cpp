@@ -36,6 +36,8 @@ float abcd[4][2][2];
 float ef[4][2][1];
 float p[4];
 
+int flag=0;
+
 char name_var[25]={"Barnsley Fern"};
 
 bool isFirstDisplay = true;
@@ -111,32 +113,50 @@ void myinit()
 
 void display_name()
 {
+	if(flag==1){
   glRasterPos2f(-9,9);
 
   for(int i=0; name_var[i]!='\0';i++)
   {
-  glutBitmapCharacter(GLUT_BITMAP_9_BY_15, name_var[i]);
+	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, name_var[i]);
   }
+	}
 
 }
 
-static void resize(int width, int height)
+void reshapeFunc(int w, int h)
 {
-	float xmin=-10, ymin=0, xmax=10, ymax=10;
-	if(width>height){
-		xmin*=(width/height);
-		xmax*=(width/height);
-	}
-	else{
-		ymin*=(height/width);
-		ymax*=(height/width);
-	}
+    if (h == 0)
+            h = 1;
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(xmin,xmax,ymin,ymax);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity() ;
+    glViewport(0, 0, w, h);
+    gluPerspective(45, ((float)w)/((float)h), 1, 200);
+
+    glLoadIdentity();
+    gluLookAt(0.0, 0.0, 0.0,
+            0.0, 0.0,0.0,
+            0.0, 0.0, 0.0);
 }
+
+void mouse(int button, int state, int x, int y)
+{
+	if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
+		flag=1;
+	else
+		flag=0;
+
+}
+
+/*void keyboard(unsigned char Key, int x, int y)
+{
+	switch(Key)
+	{
+	case 'r':
+	}
+} */
+
 
 void display( void )
 {
@@ -147,23 +167,28 @@ void display( void )
     //initialization of abcd, ef, and p if first display
     if(isFirstDisplay){
         changeFern(1);
-        isFirstDisplay = false;
+		isFirstDisplay = false;
     }
+
 
 
 /* compute and plots 5000 new points */
 
     float x = 0, y = 0;
 
-    for(k=0; k<15000; k++)
+    for(k=0; k<30000; k++)
     {
         //cout<<'('<<x<<','<<y<<')'<<endl;
+
         float num = rand()%100/100;
         float num2 = rand()%3;
         if(num2==0) glColor3f(num,0,0);
         else if(num2==1) glColor3f(0,num,0);
         else glColor3f(0,0,num);
-        generateFern(x,y);
+
+		if(flag==1)
+			generateFern(x,y);
+
         glColor3f(0,1,0.3);
         glBegin(GL_POINTS);
         glVertex2f(x,y);
@@ -182,6 +207,7 @@ int main(int argc, char** argv)
     glutInitWindowSize(500,500); /* 500 x 500 pixel window */
     glutInitWindowPosition(25,25); /* place window top left on display */
     glutCreateWindow("Barnsley Fern"); /* window title */
+	glutMouseFunc(mouse);
     glutDisplayFunc(display); /* display callback invoked when window opened */
 
     glutCreateMenu(changeFern);
