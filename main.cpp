@@ -37,6 +37,7 @@ float ef[4][2][1];
 float p[4];
 
 int flag=0;
+int w,a,s,d,x;
 
 char name_var[25]={"Barnsley Fern"};
 
@@ -105,23 +106,22 @@ void myinit()
 /* set up viewing */
 /* 500 x 500 window with origin lower left */
 
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      gluOrtho2D(-10, 10, 0, 10);
-      glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-10, 10, 0, 10);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 void display_name()
 {
-	if(flag==1){
-  glRasterPos2f(-9,9);
+  	if(flag==1){
+        glRasterPos2f(-9,9);
 
-  for(int i=0; name_var[i]!='\0';i++)
-  {
-	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, name_var[i]);
-  }
-	}
-
+        for(int i=0; name_var[i]!='\0';i++)
+        {
+      	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, name_var[i]);
+        }
+  	}
 }
 
 void reshapeFunc(int w, int h)
@@ -135,27 +135,28 @@ void reshapeFunc(int w, int h)
     gluPerspective(45, ((float)w)/((float)h), 1, 200);
 
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 0.0,
-            0.0, 0.0,0.0,
-            0.0, 0.0, 0.0);
+    gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0, 0.0, 0.0);
 }
 
 void mouse(int button, int state, int x, int y)
 {
-	if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
-		flag=1;
-	else
-		flag=0;
-
+  	if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
+  		  flag=1;
+  	else
+  		  flag=0;
 }
 
-/*void keyboard(unsigned char Key, int x, int y)
+void keyboard(unsigned char key, int x, int y)
 {
-	switch(Key)
-	{
-	case 'r':
-	}
-} */
+    switch(key)
+    {
+        case 'w': w=1; break; //Up
+        case 'a': a=1; break; //Left
+        case 'd': d=1; break; //Right
+        case 's': s=1; break; //Down
+        case 'x': exit(0);
+    }
+}
 
 
 void display( void )
@@ -182,12 +183,24 @@ void display( void )
 
         float num = rand()%100/100;
         float num2 = rand()%3;
-        if(num2==0) glColor3f(num,0,0);
-        else if(num2==1) glColor3f(0,num,0);
-        else glColor3f(0,0,num);
 
-		if(flag==1)
-			generateFern(x,y);
+        if(num2==0)
+          glColor3f(num,0,0);
+        else if(num2==1)
+          glColor3f(0,num,0);
+        else
+          glColor3f(0,0,num);
+
+    		if(flag==1)
+    			 generateFern(x,y);
+  		  if (w==1)
+            glTranslatef(10,10,0); //Up
+  		  if(s==1)
+            glTranslatef(-10,-10,0); //Down
+    		if(a==1)
+            glRotatef(60,1,0,0); //Left
+    		if(d==1)
+            glRotatef(-60,1,0,0); //Right
 
         glColor3f(0,1,0.3);
         glBegin(GL_POINTS);
@@ -207,7 +220,8 @@ int main(int argc, char** argv)
     glutInitWindowSize(500,500); /* 500 x 500 pixel window */
     glutInitWindowPosition(25,25); /* place window top left on display */
     glutCreateWindow("Barnsley Fern"); /* window title */
-	glutMouseFunc(mouse);
+  	glutMouseFunc(mouse);
+  	glutKeyboardFunc(keyboard);
     glutDisplayFunc(display); /* display callback invoked when window opened */
 
     glutCreateMenu(changeFern);
