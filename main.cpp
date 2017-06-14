@@ -37,10 +37,10 @@ float ef[4][2][1];
 float p[4];
 
 int flag=0;
-int w,a,s,d,x;
-
+float c;
+static float menu;
+static float submenu;
 char name_var[25]={"Barnsley Fern"};
-
 bool isFirstDisplay = true;
 
 void assignFern(float abcd[4][2][2], float ef[4][2][1], float p[4]){
@@ -73,6 +73,8 @@ void changeFern(const int changeLeaf){
                 strcpy(name_var,"Culcita Fern");
                 glutPostRedisplay();
                 break;
+        case 5: exit(0);
+
     }
 }
 
@@ -106,72 +108,75 @@ void myinit()
 /* set up viewing */
 /* 500 x 500 window with origin lower left */
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(-10, 10, 0, 10);
-    glMatrixMode(GL_MODELVIEW);
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      gluOrtho2D(-10, 10, 0, 10);
+      glMatrixMode(GL_MODELVIEW);
 }
 
 void display_name()
 {
-  	if(flag==1){
-        glRasterPos2f(-9,9);
+	if(flag==1){
+  	glRasterPos2f(-9,9);
 
-        for(int i=0; name_var[i]!='\0';i++)
-        {
-      	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, name_var[i]);
-        }
+  	for(int i=0; name_var[i]!='\0';i++)
+  	{
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, name_var[i]);
   	}
 }
-
+}
 void reshapeFunc(int w, int h)
 {
-    if (h == 0)
-            h = 1;
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, w, h);
-    gluPerspective(45, ((float)w)/((float)h), 1, 200);
-
-    glLoadIdentity();
-    gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0, 0.0, 0.0);
+	glViewport(0, 0, w, h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (w <= h)
+		glOrtho(-2.0, 2.0, -2.0 * (GLfloat) h / (GLfloat) w, 2.0 * (GLfloat) h / (GLfloat) w, -10.0, 10.0);
+	else
+		glOrtho(-2.0 * (GLfloat) w / (GLfloat) h, 2.0 * (GLfloat) w / (GLfloat) h, -2.0, 2.0, -10.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);
+	glutPostRedisplay();
 }
 
 void mouse(int button, int state, int x, int y)
 {
-  	if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
-  		  flag=1;
-  	else
-  		  flag=0;
+	if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
+		flag=1;
+	else
+		flag=0;
+
 }
 
-void keyboard(unsigned char key, int x, int y)
+void colorChange( int c)
 {
-    switch(key)
-    {
-        case 'w': w=1; break; //Up
-        case 'a': a=1; break; //Left
-        case 'd': d=1; break; //Right
-        case 's': s=1; break; //Down
-        case 'x': exit(0);
-    }
+	switch(c)
+	{
+		case 6: c=6;
+				glutPostRedisplay();
+				break;
+		case 7: c=7;
+				glutPostRedisplay();
+				break;
+		case 8: c=8;
+				glutPostRedisplay();
+				break;
+	}
 }
 
 
 void display( void )
+
 {
     int j, k;
     glClearColor(1.0, 1.0, 1.0, 1.0); /* white background */
     glClear(GL_COLOR_BUFFER_BIT);  /*clear the window */
-    display_name();
+	glColor3f(0,0,1);
+	display_name();
     //initialization of abcd, ef, and p if first display
     if(isFirstDisplay){
         changeFern(1);
 		isFirstDisplay = false;
     }
-
-
 
 /* compute and plots 5000 new points */
 
@@ -183,26 +188,30 @@ void display( void )
 
         float num = rand()%100/100;
         float num2 = rand()%3;
+       /* if(num2==0) glColor3f(num,0,0);
+        else if(num2==1) glColor3f(0,num,0);
+        else glColor3f(0,0,num);*/
 
-        if(num2==0)
-          glColor3f(num,0,0);
-        else if(num2==1)
-          glColor3f(0,num,0);
-        else
-          glColor3f(0,0,num);
+		if(flag==1)
+			generateFern(x,y);
+		if(c=6)
+		{
+			glColor3f(1,0,0);
+		}
+		else if(c==7)
+		{
+			glColor3f(0,1,0);
+		}
 
-    		if(flag==1)
-    			 generateFern(x,y);
-  		  if (w==1)
-            glTranslatef(10,10,0); //Up
-  		  if(s==1)
-            glTranslatef(-10,-10,0); //Down
-    		if(a==1)
-            glRotatef(60,1,0,0); //Left
-    		if(d==1)
-            glRotatef(-60,1,0,0); //Right
+		else if(c==8)
+		{
+			glColor3f(0,0,1);
+		}
+		else
+		{
+			glColor3f(0,1,0);
+		}
 
-        glColor3f(0,1,0.3);
         glBegin(GL_POINTS);
         glVertex2f(x,y);
         glEnd();
@@ -220,18 +229,26 @@ int main(int argc, char** argv)
     glutInitWindowSize(500,500); /* 500 x 500 pixel window */
     glutInitWindowPosition(25,25); /* place window top left on display */
     glutCreateWindow("Barnsley Fern"); /* window title */
-  	glutMouseFunc(mouse);
-  	glutKeyboardFunc(keyboard);
+    glutMouseFunc(mouse);
     glutDisplayFunc(display); /* display callback invoked when window opened */
 
-    glutCreateMenu(changeFern);
-    glutAddMenuEntry("Barnsley",1);
-    glutAddMenuEntry("Barnsley_Mod",2);
-    glutAddMenuEntry("Cyclo",3);
-    glutAddMenuEntry("Culcita",4);
-    glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-    myinit(); /* set attributes */
 
-    glutMainLoop(); /* enter event loop */
+	submenu=glutCreateMenu(colorChange);
+
+  	glutAddMenuEntry("Red",6);
+	glutAddMenuEntry("Green",7);
+	glutAddMenuEntry("Blue",8);
+
+     glutCreateMenu(changeFern); //Main menu
+     glutAddSubMenu("Color",submenu);
+     glutAddMenuEntry("Barnsley",1);
+     glutAddMenuEntry("Barnsley_Mod",2);
+     glutAddMenuEntry("Cyclo",3);
+     glutAddMenuEntry("Culcita",4);
+     glutAddMenuEntry("Quit",5);
+
+      glutAttachMenu(GLUT_RIGHT_BUTTON);
+ 	  myinit(); /* set attributes */
+      glutMainLoop(); /* enter event loop */
 }
