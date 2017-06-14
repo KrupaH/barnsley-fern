@@ -142,25 +142,12 @@ void mouse(int button, int state, int x, int y)
 {
 	if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
 		flag=1;
-	else
-		flag=0;
-
 }
 
-void colorChange( int c)
+void colorChange(int color)
 {
-	switch(c)
-	{
-		case 6: c=6;
-				glutPostRedisplay();
-				break;
-		case 7: c=7;
-				glutPostRedisplay();
-				break;
-		case 8: c=8;
-				glutPostRedisplay();
-				break;
-	}
+  	c = color;
+    glutPostRedisplay();
 }
 
 
@@ -170,53 +157,34 @@ void display( void )
     int j, k;
     glClearColor(1.0, 1.0, 1.0, 1.0); /* white background */
     glClear(GL_COLOR_BUFFER_BIT);  /*clear the window */
-	glColor3f(0,0,1);
-	display_name();
-    //initialization of abcd, ef, and p if first display
-    if(isFirstDisplay){
-        changeFern(1);
-		isFirstDisplay = false;
-    }
+
+    if(c==6) glColor3f(1,0,0);
+    else if(c==7) glColor3f(0,1,0);
+    else if(c==8) glColor3f(0,0,1);
+    else glColor3f(0,1,0);
+
+	   display_name();
+	    cout<<"Flag: "<<flag<<" c="<<c<<"";
+      //initialization of abcd, ef, and p if first display
+      if(isFirstDisplay){
+          changeFern(1);
+		      isFirstDisplay = false;
+      }
 
 /* compute and plots 5000 new points */
 
     float x = 0, y = 0;
 
-    for(k=0; k<30000; k++)
-    {
-        //cout<<'('<<x<<','<<y<<')'<<endl;
-
-        float num = rand()%100/100;
-        float num2 = rand()%3;
-       /* if(num2==0) glColor3f(num,0,0);
-        else if(num2==1) glColor3f(0,num,0);
-        else glColor3f(0,0,num);*/
-
-		if(flag==1)
-			generateFern(x,y);
-		if(c=6)
-		{
-			glColor3f(1,0,0);
-		}
-		else if(c==7)
-		{
-			glColor3f(0,1,0);
-		}
-
-		else if(c==8)
-		{
-			glColor3f(0,0,1);
-		}
-		else
-		{
-			glColor3f(0,1,0);
-		}
-
-        glBegin(GL_POINTS);
-        glVertex2f(x,y);
-        glEnd();
-        glFlush();
-     }
+    if(flag==1){
+        for(k=0; k<30000; k++)
+        {
+  		       generateFern(x,y);
+  			     glBegin(GL_POINTS);
+             glVertex2f(x,y);
+             glEnd();
+             glFlush();
+  		  }
+    }
  }
 
 int main(int argc, char** argv)
