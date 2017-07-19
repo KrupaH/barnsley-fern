@@ -130,11 +130,13 @@ void reshapeFunc(int w, int h)
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if (w <= h)
+
+    if (w <= h)
 		glOrtho(-2.0, 2.0, -2.0 * (GLfloat) h / (GLfloat) w, 2.0 * (GLfloat) h / (GLfloat) w, -10.0, 10.0);
 	else
 		glOrtho(-2.0 * (GLfloat) w / (GLfloat) h, 2.0 * (GLfloat) w / (GLfloat) h, -2.0, 2.0, -10.0, 10.0);
-	glMatrixMode(GL_MODELVIEW);
+
+    glMatrixMode(GL_MODELVIEW);
 	glutPostRedisplay();
 }
 
@@ -163,26 +165,26 @@ void display( void )
     else if(c==8) glColor3f(0,0,1);
     else glColor3f(0,1,0);
 
-	   display_name();
-	    cout<<"Flag: "<<flag<<" c="<<c<<"";
-      //initialization of abcd, ef, and p if first display
-      if(isFirstDisplay){
-          changeFern(1);
-		      isFirstDisplay = false;
-      }
+    display_name();
+    cout<<"Flag: "<<flag<<" c="<<c<<endl;
+    //initialization of abcd, ef, and p if first display
+    if(isFirstDisplay){
+        changeFern(1);
+        isFirstDisplay = false;
+    }
 
 /* compute and plots 5000 new points */
 
     float x = 0, y = 0;
 
     if(flag==1){
-        for(k=0; k<30000; k++)
+        for(k=0; k<5000; k++)
         {
-  		       generateFern(x,y);
-  			     glBegin(GL_POINTS);
-             glVertex2f(x,y);
-             glEnd();
-             glFlush();
+            generateFern(x,y);
+            glBegin(GL_POINTS);
+            glVertex2f(x,y);
+            glEnd();
+            glFlush();
   		  }
     }
  }
@@ -202,21 +204,21 @@ int main(int argc, char** argv)
 
 
 
-	submenu=glutCreateMenu(colorChange);
+    submenu=glutCreateMenu(colorChange);
 
-  	glutAddMenuEntry("Red",6);
-	glutAddMenuEntry("Green",7);
-	glutAddMenuEntry("Blue",8);
+    glutAddMenuEntry("Red",6);
+    glutAddMenuEntry("Green",7);
+    glutAddMenuEntry("Blue",8);
 
-     glutCreateMenu(changeFern); //Main menu
-     glutAddSubMenu("Color",submenu);
-     glutAddMenuEntry("Barnsley",1);
-     glutAddMenuEntry("Barnsley_Mod",2);
-     glutAddMenuEntry("Cyclo",3);
-     glutAddMenuEntry("Culcita",4);
-     glutAddMenuEntry("Quit",5);
+    glutCreateMenu(changeFern); //Main menu
+    glutAddSubMenu("Color",submenu);
+    glutAddMenuEntry("Barnsley",1);
+    glutAddMenuEntry("Barnsley_Mod",2);
+    glutAddMenuEntry("Cyclo",3);
+    glutAddMenuEntry("Culcita",4);
+    glutAddMenuEntry("Quit",5);
 
-      glutAttachMenu(GLUT_RIGHT_BUTTON);
- 	  myinit(); /* set attributes */
-      glutMainLoop(); /* enter event loop */
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+    myinit(); /* set attributes */
+    glutMainLoop(); /* enter event loop */
 }
